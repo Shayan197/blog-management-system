@@ -1,2 +1,2 @@
-import "./auth/role.model.js";
+import './auth/role.model.js';
 import './auth/user.model.js';

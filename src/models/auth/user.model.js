@@ -1,7 +1,7 @@
-import { DataTypes, Model } from "sequelize"
-import sequelize from "../../config/db.config.js"
-import { v7 as uuidv7 } from "uuid"
+import { DataTypes, Model } from 'sequelize';
+import { v7 as uuidv7 } from 'uuid';
 
+import sequelize from '../../config/db.config.js';
 
 class User extends Model {}
 
@@ -17,7 +17,7 @@ User.init(
         uuid: {
             type: DataTypes.UUID,
             allowNull: false,
-            defaultValue: () => uuidv7()
+            defaultValue: () => uuidv7(),
         },
         //foreign key from ROLE model
         roleId: {
@@ -28,7 +28,7 @@ User.init(
                 key: 'id',
             },
             onUpdate: 'CASCADE',
-            onDelete: 'RESTRICT'
+            onDelete: 'RESTRICT',
         },
         //personal information
         firstName: {
@@ -48,12 +48,8 @@ User.init(
             },
         },
         gender: {
-            type: DataTypes.ENUM(
-                'male',
-                'female',
-                'other',
-            ),
-            allowNull: false
+            type: DataTypes.ENUM('male', 'female', 'other'),
+            allowNull: false,
         },
         dob: {
             type: DataTypes.DATEONLY,
@@ -85,7 +81,7 @@ User.init(
         },
         //professional information
         salary: {
-            type: DataTypes.DECIMAL(12,2),
+            type: DataTypes.DECIMAL(12, 2),
             allowNull: true,
             defaultValue: 0,
         },
@@ -98,20 +94,15 @@ User.init(
         },
         //user status / account status
         status: {
-            type: DataTypes.ENUM(
-                'pending',
-                'active',
-                'blocked',
-                'suspended'
-            ),
+            type: DataTypes.ENUM('pending', 'active', 'blocked', 'suspended'),
             defaultValue: 'pending',
             allowNull: false,
         },
         //postgres json type for flexible data
         preferences: {
-            type:DataTypes.JSON,
+            type: DataTypes.JSON,
             allowNull: true,
-            defaultValue: {}
+            defaultValue: {},
         },
         //postgres array type for storing multiple skills
         skills: {
@@ -143,7 +134,7 @@ User.init(
             defaultValue: false,
         },
         otp: {
-            type: DataTypes.INTEGER
+            type: DataTypes.INTEGER,
         },
         otpCount: {
             type: DataTypes.INTEGER,
@@ -153,7 +144,7 @@ User.init(
         fullName: {
             type: DataTypes.VIRTUAL,
             get() {
-                return `${this.firstName} ${this.lastName}`
+                return `${this.firstName} ${this.lastName}`;
             },
         },
     },
@@ -167,30 +158,30 @@ User.init(
         indexes: [
             {
                 unique: true,
-                fields: ['uuid']
+                fields: ['uuid'],
             },
             {
                 unique: true,
-                fields: ['email']
+                fields: ['email'],
             },
             {
                 unique: true,
-                fields: ['phone']
+                fields: ['phone'],
             },
             {
-                fields: ['role_id']
+                fields: ['role_id'],
             },
             {
-                fields: ['status']
+                fields: ['status'],
             },
             {
-                fields: ['is_verified']
+                fields: ['is_verified'],
             },
             {
-                fields: ['is_active']
+                fields: ['is_active'],
             },
         ],
-    }
+    },
 );
 
 export default User;

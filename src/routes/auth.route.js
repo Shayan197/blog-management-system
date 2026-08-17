@@ -1,5 +1,6 @@
 // import required modules and configuration
 import express from 'express';
+
 import * as authCtrl from '../controllers/auth.controller.js';
 import { verifyToken, verifyRefreshToken } from '../middlewares/auth.middleware.js';
 
@@ -17,9 +18,7 @@ router.post('/logout', verifyToken, authCtrl.logoutUser);
 
 router.post('/token-refresh', verifyRefreshToken, authCtrl.regenerateAccessToken);
 
-router.route('/me')
-    .get(verifyToken, authCtrl.getUser)
-    .patch(verifyToken, authCtrl.updateUser);
+router.route('/me').get(verifyToken, authCtrl.getUser).patch(verifyToken, authCtrl.updateUser);
 
 router.post('/password/update', verifyToken, authCtrl.updatePassword);
 

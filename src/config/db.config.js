@@ -1,13 +1,12 @@
-import chalk from "chalk";
-import { Sequelize } from "sequelize";
-import { dbUrl, nodeEnv } from "./initial.config.js";
+import chalk from 'chalk';
+import { Sequelize } from 'sequelize';
+
+import { dbUrl, nodeEnv } from './initial.config.js';
 
 const sequelize = new Sequelize(dbUrl, {
-    dialect: "postgres",
+    dialect: 'postgres',
     define: { underscored: true },
-    logging: nodeEnv !== "production"
-    ? (msg) => console.log(chalk.blue(msg))
-    : false,
+    logging: nodeEnv !== 'production' ? (msg) => console.log(chalk.blue(msg)) : false,
     retry: {
         max: 3,
         match: [
@@ -17,9 +16,9 @@ const sequelize = new Sequelize(dbUrl, {
             Sequelize.ConnectionAcquireTimeoutError,
         ],
     },
-    dialectOptions:{
+    dialectOptions: {
         connectTimeout: 60000,
-        timezone: "Asia/Karachi",  
+        timezone: 'Asia/Karachi',
     },
     pool: {
         max: 5,
@@ -33,16 +32,22 @@ export default sequelize;
 
 //Async function connect to teh Postgres database
 export const connectDB = async () => {
-    try{
+    try {
         await sequelize.authenticate();
-        console.log(`${chalk.green.bold("Successfully connected to database")}`);
-        console.log(`${chalk.green.bold("============================================================================")}`);
+        console.log(`${chalk.green.bold('Successfully connected to database')}`);
+        console.log(
+            `${chalk.green.bold('============================================================================')}`,
+        );
         await sequelize.sync();
-        console.log(`${chalk.green.bold("Models synced successfully")}`);
-        console.log(`${chalk.green.bold("============================================================================")}`);        
+        console.log(`${chalk.green.bold('Models synced successfully')}`);
+        console.log(
+            `${chalk.green.bold('============================================================================')}`,
+        );
     } catch (error) {
-        console.log(`${chalk.red.bold("Error")} failed to connect to database`, error);
-        console.log(`${chalk.red.bold("============================================================================")}`);        
+        console.log(`${chalk.red.bold('Error')} failed to connect to database`, error);
+        console.log(
+            `${chalk.red.bold('============================================================================')}`,
+        );
         process.exit(1);
     }
 };

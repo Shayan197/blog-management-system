@@ -1,4 +1,4 @@
-import bcrypt from "bcrypt";
+import bcrypt from 'bcrypt';
 
 // ============================ hashPassword =================================
 
@@ -10,7 +10,7 @@ export const hashPassword = async (password) => {
     const hashPassword = await bcrypt.hash(password, salt);
     // Return the hashed password
     return hashPassword;
-}
+};
 
 // ============================ comparePassword =================================
 
@@ -18,18 +18,21 @@ export const hashPassword = async (password) => {
 export const comparePassword = async (password, hashedPassword) => {
     // Compare the provided password with the hashed password securely
     return await bcrypt.compare(password, hashedPassword);
-}
+};
 
 // ============================ validatePassword =================================
 
 export const validatePassword = (password, confirmPassword) => {
-    if(!password) {
+    if (!password) {
         return 'password is required';
     }
-    if(confirmPassword && password !== confirmPassword) return 'password and confirm password does not match';
-    if(password.length < 8) return 'password must be at least 8 characters long';
+    if (confirmPassword && password !== confirmPassword)
+        return 'password and confirm password does not match';
+    if (password.length < 8) return 'password must be at least 8 characters long';
     // strong password
-    const strongPasswordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
-    if(!strongPasswordRegex.test(password)) return 'password must contain at least one lowercase letter, one uppercase letter, one digit, and one special character';
+    const strongPasswordRegex =
+        /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+    if (!strongPasswordRegex.test(password))
+        return 'password must contain at least one lowercase letter, one uppercase letter, one digit, and one special character';
     return null;
-}
+};

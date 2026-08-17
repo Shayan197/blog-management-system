@@ -1,6 +1,7 @@
-import { DataTypes, Model } from "sequelize"
-import sequelize from "../../config/db.config.js";
-import { v7 as uuidv7} from "uuid"
+import { DataTypes, Model } from 'sequelize';
+import { v7 as uuidv7 } from 'uuid';
+
+import sequelize from '../../config/db.config.js';
 
 class Role extends Model {}
 Role.init(
@@ -21,7 +22,7 @@ Role.init(
             validate: {
                 len: [3, 50],
                 notEmpty: true,
-            }
+            },
         },
         slug: {
             type: DataTypes.STRING(50),
@@ -29,7 +30,7 @@ Role.init(
             validate: {
                 isLowercase: true,
                 notEmpty: true,
-            }
+            },
         },
         description: {
             type: DataTypes.TEXT,
@@ -41,7 +42,7 @@ Role.init(
             defaultValue: 1,
             validate: {
                 min: 1,
-            }
+            },
         },
         color: {
             type: DataTypes.STRING(20),
@@ -72,24 +73,24 @@ Role.init(
         indexes: [
             {
                 unique: true,
-                fields:['uuid']
+                fields: ['uuid'],
             },
             {
                 unique: true,
-                fields: ['name',]
+                fields: ['name'],
             },
             {
                 unique: true,
-                fields: ['slug',]
+                fields: ['slug'],
             },
             {
-                fields: ['priority',]
+                fields: ['priority'],
             },
             {
-                fields: ['is_active',]
+                fields: ['is_active'],
             },
         ],
-    }
+    },
 );
 
 export default Role;

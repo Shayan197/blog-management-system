@@ -1,4 +1,4 @@
-import User from "../../models/auth/user.model.js";
+import User from '../../models/auth/user.model.js';
 
 export const seedUsers = async () => {
     const users = [
@@ -12,11 +12,21 @@ export const seedUsers = async () => {
             gender: 'male',
             status: 'active',
             experience: 5,
-            skills: ['Node.js', 'Express.js', 'Mysql', 'MongoDB', 'Php', 'Laravel', 'Html', 'Css', 'Boostrap'],
+            skills: [
+                'Node.js',
+                'Express.js',
+                'Mysql',
+                'MongoDB',
+                'Php',
+                'Laravel',
+                'Html',
+                'Css',
+                'Boostrap',
+            ],
             preferences: {
                 theme: 'dark',
                 language: 'en',
-            }
+            },
         },
         {
             roleId: 2,
@@ -28,11 +38,21 @@ export const seedUsers = async () => {
             gender: 'female',
             status: 'active',
             experience: 5,
-            skills: ['Node.js', 'Express.js', 'Mysql', 'MongoDB', 'Php', 'Laravel', 'Html', 'Css', 'Boostrap'],
+            skills: [
+                'Node.js',
+                'Express.js',
+                'Mysql',
+                'MongoDB',
+                'Php',
+                'Laravel',
+                'Html',
+                'Css',
+                'Boostrap',
+            ],
             preferences: {
                 theme: 'light',
                 language: 'en',
-            }
+            },
         },
         {
             roleId: 3,
@@ -44,11 +64,21 @@ export const seedUsers = async () => {
             gender: 'female',
             status: 'active',
             experience: 5,
-            skills: ['Node.js', 'Express.js', 'Mysql', 'MongoDB', 'Php', 'Laravel', 'Html', 'Css', 'Boostrap'],
+            skills: [
+                'Node.js',
+                'Express.js',
+                'Mysql',
+                'MongoDB',
+                'Php',
+                'Laravel',
+                'Html',
+                'Css',
+                'Boostrap',
+            ],
             preferences: {
                 theme: 'light',
                 language: 'en',
-            }
+            },
         },
         {
             roleId: 4,
@@ -60,11 +90,21 @@ export const seedUsers = async () => {
             gender: 'female',
             status: 'active',
             experience: 5,
-            skills: ['Node.js', 'Express.js', 'Mysql', 'MongoDB', 'Php', 'Laravel', 'Html', 'Css', 'Boostrap'],
+            skills: [
+                'Node.js',
+                'Express.js',
+                'Mysql',
+                'MongoDB',
+                'Php',
+                'Laravel',
+                'Html',
+                'Css',
+                'Boostrap',
+            ],
             preferences: {
                 theme: 'light',
                 language: 'en',
-            }
+            },
         },
         {
             roleId: 5,
@@ -76,11 +116,21 @@ export const seedUsers = async () => {
             gender: 'female',
             status: 'active',
             experience: 5,
-            skills: ['Node.js', 'Express.js', 'Mysql', 'MongoDB', 'Php', 'Laravel', 'Html', 'Css', 'Boostrap'],
+            skills: [
+                'Node.js',
+                'Express.js',
+                'Mysql',
+                'MongoDB',
+                'Php',
+                'Laravel',
+                'Html',
+                'Css',
+                'Boostrap',
+            ],
             preferences: {
                 theme: 'light',
                 language: 'en',
-            }
+            },
         },
         {
             roleId: 6,
@@ -92,15 +142,25 @@ export const seedUsers = async () => {
             gender: 'female',
             status: 'active',
             experience: 5,
-            skills: ['Node.js', 'Express.js', 'Mysql', 'MongoDB', 'Php', 'Laravel', 'Html', 'Css', 'Boostrap'],
+            skills: [
+                'Node.js',
+                'Express.js',
+                'Mysql',
+                'MongoDB',
+                'Php',
+                'Laravel',
+                'Html',
+                'Css',
+                'Boostrap',
+            ],
             preferences: {
                 theme: 'light',
                 language: 'en',
-            }
-        }
+            },
+        },
     ];
     await User.bulkCreate(users, {
         ignoreDuplicates: true,
     });
-    console.log("User seeded successfully");
-}
+    console.log('User seeded successfully');
+};

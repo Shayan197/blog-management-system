@@ -1,4 +1,4 @@
-import { transporter } from "../config/email.config.js";
+import { transporter } from '../config/email.config.js';
 
 export const sentOTPEmail = async (email, otp) => {
     try {
@@ -18,11 +18,11 @@ export const sentOTPEmail = async (email, otp) => {
                     <p>Medium Clone Team</p>
                 </div>
             `,
-        }
+        };
 
         await transporter.sendMail(mailOptions);
         return true;
     } catch (error) {
         return false;
     }
-}
+};

@@ -1,25 +1,25 @@
-import { Sequelize } from "sequelize";
+import { Sequelize } from 'sequelize';
 
 // ================================================================
 // ===================== success responses ========================
 // ================================================================
 
-const successOk = (res, message ='Request processed successfully.') => {
+const successOk = (res, message = 'Request processed successfully.') => {
     return res.status(200).send({
         success: true,
-        message
-    })
-}
+        message,
+    });
+};
 
 // ===================== successOkWithData ========================
 
-const successOkWithData = (res, data, message ="Request processed successfully") => {
+const successOkWithData = (res, data, message = 'Request processed successfully') => {
     return res.status(200).send({
         success: true,
         message,
         data: data,
-    })
-}
+    });
+};
 
 // =========================== created ============================
 
@@ -27,8 +27,8 @@ const created = (res, message = 'Resource created successfully') => {
     return res.status(201).send({
         success: true,
         message,
-    })
-}
+    });
+};
 
 // ======================= createdWithData ========================
 
@@ -37,8 +37,8 @@ const createdWithData = (res, data, message = 'Resource created successfully') =
         success: true,
         message,
         data: data,
-    })
-}
+    });
+};
 
 // ================================================================
 // ======================= error 400 responses ========================
@@ -51,8 +51,8 @@ const validationError = (res, message, key = 'message') => {
         success: false,
         type: 'user',
         error: { [key]: message },
-    })
-}
+    });
+};
 
 // ======================== validationErrorObj =======================
 // This will be used when we have to send multiple errors in response.
@@ -62,8 +62,8 @@ const validationErrorObj = (res, errorObj) => {
         success: false,
         type: 'user',
         error: errorObj,
-    })
-}
+    });
+};
 
 // ========================= frontError ===========================
 
@@ -72,8 +72,8 @@ const frontError = (res, message, key = 'message') => {
         success: false,
         type: 'frontend',
         error: { [key]: message },
-    })
-}
+    });
+};
 
 // ========================= frontErrorObj ===========================
 // This will be used when we have to send multiple errors in response.
@@ -83,8 +83,8 @@ const frontErrorObj = (res, errorObj) => {
         success: false,
         type: 'frontend',
         error: errorObj,
-    })
-}
+    });
+};
 
 // ========================== backError ===========================
 // This will be used when we are calling the other external Api's from backend And facing an issue.
@@ -94,28 +94,31 @@ const backError = (res, message) => {
         success: false,
         type: 'backend',
         error: { message },
-    })
-}
+    });
+};
 
 // ============================ UnauthorizedError ==========================
 
 const unauthorizedError = (res, message = 'Access Denied. You are not authorized.') => {
     return res.status(401).json({
-        success:false,
-        type:'user',
+        success: false,
+        type: 'user',
         error: { message },
-    })
-}
+    });
+};
 
 // ============================ forbiddenError ==========================
 
-const forbiddenError = (res, message = 'Forbidden. you do not have permission to access this resource.') => {
+const forbiddenError = (
+    res,
+    message = 'Forbidden. you do not have permission to access this resource.',
+) => {
     return res.status(403).json({
         success: false,
         type: 'user',
         error: { message },
-    })
-}
+    });
+};
 
 // ============================ notFound ==========================
 
@@ -124,8 +127,8 @@ const notFound = (res, message = 'Resource not found.') => {
         success: false,
         type: 'user',
         error: { message },
-    })
-}
+    });
+};
 
 // ========================= conflictError ========================
 
@@ -134,18 +137,21 @@ const conflictError = (res, message = 'Conflict occurred. Resource already exist
         success: false,
         type: 'user',
         error: { message },
-    })
-}
+    });
+};
 
 // ========================= tooManyRequests ========================
 
-const tooManyRequestsError = (res, message = 'Too many requests. Please wait before trying again.') => {
+const tooManyRequestsError = (
+    res,
+    message = 'Too many requests. Please wait before trying again.',
+) => {
     return res.status(429).send({
         success: false,
         type: 'user',
         error: { message },
-    })
-}
+    });
+};
 
 // ========================= paymentRequiredError ========================
 
@@ -154,8 +160,8 @@ const paymentRequiredError = (res, message = 'Payment is required to access this
         success: false,
         type: 'user',
         error: { message },
-    })
-}
+    });
+};
 
 // ======================== sequelizeValidationError =======================
 
@@ -163,7 +169,7 @@ const sequelizeValidationError = (res, error) => {
     const errorMessage = error.errors[0].message;
     const key = error.errors[0].path;
     return validationError(res, errorMessage, key);
-}
+};
 
 // ======================== sequelizeFrontValidationError =======================
 
@@ -171,7 +177,7 @@ const sequelizeFrontError = (res, error) => {
     const errorMessage = error.errors[0].message;
     const key = error.errors[0].path;
     return frontError(res, errorMessage, key);
-}
+};
 
 // ================================================================
 // ======================= error 500 responses ========================
@@ -181,34 +187,43 @@ const sequelizeFrontError = (res, error) => {
 
 const catchError = (res, error) => {
     return res.status(500).send({
-        success:false,
+        success: false,
         type: 'backend',
-        error: {  message: 'internal server error' }
-    })
-}
+        error: { message: 'internal server error' },
+    });
+};
 
 // ========================= catchWithSequelizeFrontError ===========================
 
 const catchWithSequelizeFrontError = (res, error) => {
     if (error instanceof Sequelize.ValidationError) return sequelizeFrontError(res, error);
-    if (error.errors && error.errors[0].errors instanceof Sequelize.ValidationError) return frontError(res, error.errors[0].message)
-    if (error.name === 'SequelizeForeignKeyConstraintError') return frontError(res, "Foreign key voilates. Making a relation with value that not exit.", error.parent?.constraint);
-    if (error.name === 'SequelizeDatabaseError') return frontError(res, error.message, "database");
+    if (error.errors && error.errors[0].errors instanceof Sequelize.ValidationError)
+        return frontError(res, error.errors[0].message);
+    if (error.name === 'SequelizeForeignKeyConstraintError')
+        return frontError(
+            res,
+            'Foreign key voilates. Making a relation with value that not exit.',
+            error.parent?.constraint,
+        );
+    if (error.name === 'SequelizeDatabaseError') return frontError(res, error.message, 'database');
     return catchError(res, error);
 };
-
 
 // ========================= catchWithSequelizeValidationError ===========================
 
 const catchWithSequelizeValidationError = (res, error) => {
     if (error instanceof Sequelize.ValidationError) return sequelizeValidationError(res, error);
-    if (error.errors && error.errors[0].errors instanceof Sequelize.ValidationError) return sequelizeValidationError(res, error)
-    if (error.name === 'SequelizeForeignKeyConstraintError') return validationError(res, "Selecting or sending a value that does not exist.", "foreign_key");
+    if (error.errors && error.errors[0].errors instanceof Sequelize.ValidationError)
+        return sequelizeValidationError(res, error);
+    if (error.name === 'SequelizeForeignKeyConstraintError')
+        return validationError(
+            res,
+            'Selecting or sending a value that does not exist.',
+            'foreign_key',
+        );
     if (error.name === 'SequelizeDatabaseError') return validationError(res, error.message);
     return catchError(res, error);
 };
-
-
 
 export {
     successOk,

@@ -1,34 +1,60 @@
 {
-  "name": "blog-management-system",
-  "version": "1.0.0",
-  "description": "Blog Management System",
-  "author": "Shayan Bukhari (SB)",
-  "license": "ISC",
-  "type": "module",
-  "main": "./src/app.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "nodemon ./src/app.js",
-    "dev": "node ./src/app.js"
-  },
-  "dependencies": {
-    "bcrypt": "^6.0.0",
-    "chalk": "^5.6.2",
-    "compression": "^1.8.1",
-    "cookie-parser": "^1.4.7",
-    "cors": "^2.8.6",
-    "dotenv": "^17.4.2",
-    "express": "^5.2.1",
-    "express-rate-limit": "^8.6.2",
-    "express-validator": "^7.3.2",
-    "fast-jwt": "^6.2.4",
-    "helmet": "^8.3.0",
-    "morgan": "^1.11.0",
-    "nodemailer": "^9.0.3",
-    "nodemon": "^3.1.14",
-    "pg": "^8.22.0",
-    "pg-hstore": "^2.3.4",
-    "sequelize": "^6.37.8",
-    "uuid": "^14.0.1"
-  }
+    "name": "blog-management-system",
+    "version": "1.0.0",
+    "description": "Blog Management System",
+    "author": "Shayan Bukhari (SB)",
+    "license": "ISC",
+    "type": "module",
+    "main": "./src/app.js",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1",
+        "dev": "nodemon ./src/app.js",
+        "start": "node ./src/app.js",
+        "prepare": "husky",
+        "lint": "eslint src/",
+        "lint:fix": "eslint src/ --fix",
+        "format": "prettier --write src/",
+        "format:check": "prettier --check src/"
+    },
+    "lint-staged": {
+        "src/**/*.js": [
+            "eslint --fix --no-warn-ignored",
+            "prettier --write"
+        ],
+        "*.{js,json}": [
+            "prettier --write"
+        ]
+    },
+    "dependencies": {
+        "bcrypt": "^6.0.0",
+        "chalk": "^5.6.2",
+        "compression": "^1.8.1",
+        "cookie-parser": "^1.4.7",
+        "cors": "^2.8.6",
+        "dotenv": "^17.4.2",
+        "express": "^5.2.1",
+        "express-rate-limit": "^8.6.2",
+        "express-validator": "^7.3.2",
+        "fast-jwt": "^6.2.4",
+        "helmet": "^8.3.0",
+        "morgan": "^1.11.0",
+        "nodemailer": "^9.0.3",
+        "pg": "^8.22.0",
+        "pg-hstore": "^2.3.4",
+        "sequelize": "^6.37.8",
+        "uuid": "^14.0.1"
+    },
+    "devDependencies": {
+        "@commitlint/cli": "^21.2.2",
+        "@commitlint/config-conventional": "^21.2.2",
+        "@eslint/js": "^10.0.1",
+        "eslint": "^10.8.1",
+        "eslint-config-prettier": "^10.1.8",
+        "eslint-plugin-import-x": "^4.17.1",
+        "globals": "^17.11.0",
+        "husky": "^9.1.7",
+        "lint-staged": "^17.3.0",
+        "nodemon": "^3.1.14",
+        "prettier": "^3.9.6"
+    }
 }
