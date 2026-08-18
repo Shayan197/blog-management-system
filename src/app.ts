@@ -8,7 +8,7 @@ import chalk from 'chalk';
 import compression from 'compression';
 import cookieParser from 'cookie-parser';
 import cors from 'cors';
-import express from 'express';
+import express, { Request, Response, NextFunction } from 'express';
 import rateLimit from 'express-rate-limit';
 import helmet from 'helmet';
 import morgan from 'morgan';
@@ -16,14 +16,14 @@ import morgan from 'morgan';
 // =========================================
 //             Code Imports
 // =========================================
-import { connectDB } from './config/db.config.js';
-import { nodeEnv, port, domain } from './config/initial.config.js';
-import './models/models.js';
-import './models/associations.js';
-import authRoutes from './routes/auth.route.js';
-import { seedRoles, seedUsers } from './seeders/index.js';
-import { catchError, validationError } from './utils/response.util.js';
-import { getIPAddress } from './utils/utils.js';
+import { connectDB } from '@/config/db.config.js';
+import { nodeEnv, port, domain } from '@/config/initial.config.js';
+import '@/models/models.js';
+import '@/models/associations.js';
+import authRoutes from '@/routes/auth.route.js';
+import { seedRoles, seedUsers } from '@/seeders/index.js';
+import { catchError, validationError } from '@/utils/response.util.js';
+import { getIPAddress } from '@/utils/utils.js';
 
 // =========================================
 //            configuration
@@ -71,7 +71,7 @@ app.use('/static', express.static(path.join(__dirname, '..', 'static')));
 //            Routes
 // =========================================
 // Route for root path
-app.get('/', (req, res) => {
+app.get('/', (_req: Request, res: Response) => {
     res.send('Welcome to Blog Management System');
 });
 
@@ -83,13 +83,22 @@ app.use('/api/auth', authRoutes);
 // =========================================
 //            Global Error handler
 // =========================================
-app.use((err, req, res, next) => {
-    if (err.code === 'UNSUPPORTED_FILE_FORMAT') return validationError(res, err.message, err.field);
-    if (err.code === 'LIMIT_FILE_SIZE')
-        return validationError(res, 'File size should not be greater than 10MB', err.field);
-    console.error(chalk.red(err.stack));
-    return catchError(res, err);
-});
+app.use(
+    (
+        err: Error & { code?: string; field?: string },
+        _req: Request,
+        res: Response,
+        _next: NextFunction,
+    ) => {
+        if (err.code === 'UNSUPPORTED_FILE_FORMAT')
+            return validationError(res, err.message, err.field);
+        if (err.code === 'LIMIT_FILE_SIZE') {
+            return validationError(res, 'File size should not be greater than 10MB', err.field);
+        }
+        console.error(chalk.red(err.stack));
+        return catchError(res, err);
+    },
+);
 
 // Database connection
 await connectDB();

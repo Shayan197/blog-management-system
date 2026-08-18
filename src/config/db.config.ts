@@ -1,7 +1,13 @@
 import chalk from 'chalk';
-import { Sequelize } from 'sequelize';
+import {
+    Sequelize,
+    ConnectionError,
+    ConnectionRefusedError,
+    TimeoutError,
+    ConnectionAcquireTimeoutError,
+} from 'sequelize';
 
-import { dbUrl, nodeEnv } from './initial.config.js';
+import { dbUrl, nodeEnv } from '@/config/initial.config.js';
 
 const sequelize = new Sequelize(dbUrl, {
     dialect: 'postgres',
@@ -10,11 +16,11 @@ const sequelize = new Sequelize(dbUrl, {
     retry: {
         max: 3,
         match: [
-            Sequelize.ConnectionError,
-            Sequelize.ConnectionRefusedError,
-            Sequelize.TimeoutError,
-            Sequelize.ConnectionAcquireTimeoutError,
-        ],
+            ConnectionError,
+            ConnectionRefusedError,
+            TimeoutError,
+            ConnectionAcquireTimeoutError,
+        ] as unknown as (typeof Error)[],
     },
     dialectOptions: {
         connectTimeout: 60000,
@@ -30,8 +36,8 @@ const sequelize = new Sequelize(dbUrl, {
 
 export default sequelize;
 
-//Async function connect to teh Postgres database
-export const connectDB = async () => {
+//Async function connect to the Postgres database
+export const connectDB = async (): Promise<void> => {
     try {
         await sequelize.authenticate();
         console.log(`${chalk.green.bold('Successfully connected to database')}`);

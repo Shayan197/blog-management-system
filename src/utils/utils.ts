@@ -2,8 +2,11 @@ import os from 'os';
 
 // =========================== convertToLowercase ===========================
 
-export const convertToLowerCase = (obj, excludeFields = []) => {
-    const newObj = {};
+export const convertToLowerCase = (
+    obj: Record<string, unknown>,
+    excludeFields: string[] = [],
+): Record<string, unknown> => {
+    const newObj: Record<string, unknown> = {};
     for (const key in obj) {
         if (Object.prototype.hasOwnProperty.call(obj, key)) {
             const value = obj[key];
@@ -20,7 +23,7 @@ export const convertToLowerCase = (obj, excludeFields = []) => {
 // ============================ validateEmail ================================
 
 const validEmailRegex = /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/;
-export const validateEmail = (email) => {
+export const validateEmail = (email: string): string | undefined => {
     if (!email) {
         return 'email is required';
     }
@@ -28,11 +31,13 @@ export const validateEmail = (email) => {
         return 'Please enter a valid email';
     }
 };
+
 // ============================ getIPAddress =================================
 
-export const getIPAddress = () => {
+export const getIPAddress = (): string => {
     const interfaces = os.networkInterfaces();
     for (const iface of Object.values(interfaces)) {
+        if (!iface) continue;
         for (const alias of iface) {
             if (alias.family === 'IPv4' && alias.address !== '127.0.0.1' && !alias.internal) {
                 return alias.address;
@@ -44,7 +49,7 @@ export const getIPAddress = () => {
 
 // ============================ capitalizeWords ===============================
 
-export const capitalizeWords = (wordString) => {
+export const capitalizeWords = (wordString: string): string => {
     wordString = wordString.toLowerCase();
     const words = wordString.split(' ');
     const capitalWords = words.map((word) => word.charAt(0).toUpperCase() + word.slice(1));
@@ -53,14 +58,16 @@ export const capitalizeWords = (wordString) => {
 
 // ============================ check31DaysExpiry =================================
 
-export const check31DaysExpiry = (activationDate) => {
+export const check31DaysExpiry = (
+    activationDate: string | Date,
+): { remainingDays: number; expired: boolean } => {
     const today = new Date();
     const activeDate = new Date(activationDate);
     //add 31 days to activation date
     const activeDatePlus31 = new Date(activeDate);
     activeDatePlus31.setDate(activeDatePlus31.getDate() + 31);
     //Calculate the difference in time
-    const timeDifference = activeDatePlus31 - today;
+    const timeDifference = activeDatePlus31.getTime() - today.getTime();
     //calculate the remaining days
     const remainingDays = Math.floor(timeDifference / (1000 * 60 * 60 * 24));
     //check if today date is past the 31-day period
@@ -70,18 +77,18 @@ export const check31DaysExpiry = (activationDate) => {
 
 // ============================ createDateWithTodayPlusAddDays =================================
 
-export const createDateWithTodayPlusAddDays = (daysToAdd) => {
+export const createDateWithTodayPlusAddDays = (daysToAdd: number): string => {
     const today = new Date();
     //create a new Date object with added days from today
     const daysToAddDate = new Date();
     daysToAddDate.setDate(today.getDate() + daysToAdd);
-    //formet the dates as string (option)
+    //format the dates as string (option)
     return daysToAddDate.toISOString().split('T')[0];
 };
 
 // ============================ getRelativePath =================================
 
-export const getRelativePath = (fullPath) => {
+export const getRelativePath = (fullPath: string): string => {
     const normalizedPath = fullPath.replace(/\\/g, '/');
     const index = normalizedPath.indexOf('/static');
     if (index === -1) return '';
@@ -90,7 +97,7 @@ export const getRelativePath = (fullPath) => {
 
 // =========================== calculateAge ===============================
 
-export const calculateAge = (dateOfBirth) => {
+export const calculateAge = (dateOfBirth: string | Date): number => {
     const today = new Date();
     const birthDate = new Date(dateOfBirth);
     let age = today.getFullYear() - birthDate.getFullYear();
@@ -103,18 +110,19 @@ export const calculateAge = (dateOfBirth) => {
 
 // =========================== removeEmptyFields ===============================
 
-export const removeEmptyFields = (obj) => {
+export const removeEmptyFields = (obj: Record<string, unknown>): Record<string, unknown> => {
     return Object.fromEntries(
-        Object.entries(obj).filter(([_, value]) => {
+        Object.entries(obj).filter(([_key, value]) => {
             if (value === null || value === undefined) return false;
             if (typeof value === 'string' && value.trim() === '') return false;
             if (Array.isArray(value) && value.length === 0) return false;
             if (
                 typeof value === 'object' &&
                 !Array.isArray(value) &&
-                Object.keys(value).length === 0
-            )
+                Object.keys(value as object).length === 0
+            ) {
                 return false;
+            }
             return true;
         }),
     );
@@ -122,8 +130,11 @@ export const removeEmptyFields = (obj) => {
 
 // ============================ extractFieldsToUpdate =================================
 
-export const extractFieldsToUpdate = (body, fields) => {
-    const fieldsToUpdate = {};
+export const extractFieldsToUpdate = (
+    body: Record<string, unknown>,
+    fields: string[],
+): Record<string, unknown> => {
+    const fieldsToUpdate: Record<string, unknown> = {};
     for (const field of fields) {
         const value = body[field];
         if (value !== undefined && value !== null && value !== '') {
@@ -135,23 +146,15 @@ export const extractFieldsToUpdate = (body, fields) => {
 
 // ============================ removeFieldsNotToUpdate =================================
 
-export const removeFieldsNotToUpdate = (body, fields) => {
+export const removeFieldsNotToUpdate = (
+    body: Record<string, unknown>,
+    fields: string[],
+): Record<string, unknown> => {
     const fieldsToUpdate = { ...body };
     for (const field of fields) {
-        if (Object.prototype.hasOwnProperty.call(fieldsToUpdate, field))
+        if (Object.prototype.hasOwnProperty.call(fieldsToUpdate, field)) {
             delete fieldsToUpdate[field];
+        }
     }
     return fieldsToUpdate;
 };
-
-// export const removeFieldsNotToUpdate = (body, fields) => {
-//     const fieldsToUpdate = { ...body };
-
-//     for (const key in fieldsToUpdate) {
-//         if (!fields.includes(key)) {
-//             delete fieldsToUpdate[key];
-//         }
-//     }
-
-//     return fieldsToUpdate;
-// };

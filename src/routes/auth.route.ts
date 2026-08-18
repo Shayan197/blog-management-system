@@ -1,8 +1,8 @@
 // import required modules and configuration
 import express from 'express';
 
-import * as authCtrl from '../controllers/auth.controller.js';
-import { verifyToken, verifyRefreshToken } from '../middlewares/auth.middleware.js';
+import * as authCtrl from '@/controllers/auth.controller.js';
+import { verifyToken, verifyRefreshToken } from '@/middlewares/auth.middleware.js';
 
 const router = express.Router();
 

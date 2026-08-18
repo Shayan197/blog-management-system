@@ -5,11 +5,12 @@
     "author": "Shayan Bukhari (SB)",
     "license": "ISC",
     "type": "module",
-    "main": "./src/app.js",
+    "main": "./dist/app.js",
     "scripts": {
         "test": "echo \"Error: no test specified\" && exit 1",
-        "dev": "nodemon ./src/app.js",
-        "start": "node ./src/app.js",
+        "dev": "tsx watch src/app.ts",
+        "build": "tsc && tsc-alias",
+        "start": "node dist/app.js",
         "prepare": "husky",
         "lint": "eslint src/",
         "lint:fix": "eslint src/ --fix",
@@ -17,11 +18,11 @@
         "format:check": "prettier --check src/"
     },
     "lint-staged": {
-        "src/**/*.js": [
+        "src/**/*.ts": [
             "eslint --fix --no-warn-ignored",
             "prettier --write"
         ],
-        "*.{js,json}": [
+        "*.{js,ts,json}": [
             "prettier --write"
         ]
     },
@@ -48,13 +49,28 @@
         "@commitlint/cli": "^21.2.2",
         "@commitlint/config-conventional": "^21.2.2",
         "@eslint/js": "^10.0.1",
+        "@types/bcrypt": "^6.0.0",
+        "@types/compression": "^1.8.1",
+        "@types/cookie-parser": "^1.4.10",
+        "@types/cors": "^2.8.19",
+        "@types/express": "^5.0.6",
+        "@types/morgan": "^1.9.10",
+        "@types/node": "^26.2.0",
+        "@types/nodemailer": "^8.0.1",
+        "@types/pg": "^8.23.1",
+        "@types/uuid": "^10.0.0",
         "eslint": "^10.8.1",
         "eslint-config-prettier": "^10.1.8",
+        "eslint-import-resolver-typescript": "^4.4.5",
         "eslint-plugin-import-x": "^4.17.1",
         "globals": "^17.11.0",
         "husky": "^9.1.7",
         "lint-staged": "^17.3.0",
         "nodemon": "^3.1.14",
-        "prettier": "^3.9.6"
+        "prettier": "^3.9.6",
+        "tsc-alias": "^1.9.2",
+        "tsx": "^4.23.12",
+        "typescript": "^6.0.3",
+        "typescript-eslint": "^8.67.0"
     }
 }

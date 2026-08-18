@@ -1,8 +1,6 @@
-// Email configuration for sending emails using nodemailer
-
 import nodemailer from 'nodemailer';
 
-import { serviceEmail, serviceEmailPass } from './initial.config.js';
+import { serviceEmail, serviceEmailPass } from '@/config/initial.config.js';
 
 // Create a transporter using SMTP transport
 export const transporter = nodemailer.createTransport({

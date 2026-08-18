@@ -1,9 +1,21 @@
 import { DataTypes, Model } from 'sequelize';
 import { v7 as uuidv7 } from 'uuid';
 
-import sequelize from '../../config/db.config.js';
+import sequelize from '@/config/db.config.js';
 
-class Role extends Model {}
+class Role extends Model {
+    declare id: number;
+    declare uuid: string;
+    declare name: string;
+    declare slug: string;
+    declare description: string | null;
+    declare priority: number;
+    declare color: string | null;
+    declare icon: string | null;
+    declare isSystem: boolean;
+    declare isActive: boolean;
+}
+
 Role.init(
     {
         id: {

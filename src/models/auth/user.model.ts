@@ -1,9 +1,34 @@
 import { DataTypes, Model } from 'sequelize';
 import { v7 as uuidv7 } from 'uuid';
 
-import sequelize from '../../config/db.config.js';
+import sequelize from '@/config/db.config.js';
 
-class User extends Model {}
+class User extends Model {
+    declare id: number;
+    declare uuid: string;
+    declare roleId: number;
+    declare firstName: string;
+    declare lastName: string;
+    declare gender: 'male' | 'female' | 'other';
+    declare dob: string | null;
+    declare email: string;
+    declare phone: string | null;
+    declare password: string;
+    declare canChangePassword: boolean;
+    declare salary: number | null;
+    declare experience: number;
+    declare status: 'pending' | 'active' | 'blocked' | 'suspended';
+    declare preferences: Record<string, unknown> | null;
+    declare skills: string[] | null;
+    declare avatar: string | null;
+    declare loginCount: number;
+    declare lastLogin: Date | null;
+    declare isVerified: boolean;
+    declare isActive: boolean;
+    declare otp: number | null;
+    declare otpCount: number;
+    declare fullName: string;
+}
 
 User.init(
     {
@@ -143,7 +168,7 @@ User.init(
         //virtual fields
         fullName: {
             type: DataTypes.VIRTUAL,
-            get() {
+            get(this: User) {
                 return `${this.firstName} ${this.lastName}`;
             },
         },

@@ -1,6 +1,6 @@
-import { transporter } from '../config/email.config.js';
+import { transporter } from '@/config/email.config.js';
 
-export const sentOTPEmail = async (email, otp) => {
+export const sentOTPEmail = async (email: string, otp: number): Promise<boolean> => {
     try {
         const mailOptions = {
             to: email,
@@ -22,7 +22,7 @@ export const sentOTPEmail = async (email, otp) => {
 
         await transporter.sendMail(mailOptions);
         return true;
-    } catch (error) {
+    } catch (_error) {
         return false;
     }
 };

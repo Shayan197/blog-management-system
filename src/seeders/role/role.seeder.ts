@@ -1,6 +1,6 @@
-import Role from '../../models/auth/role.model.js';
+import Role from '@/models/auth/role.model.js';
 
-export const seedRoles = async () => {
+export const seedRoles = async (): Promise<void> => {
     const roles = [
         {
             name: 'Super Admin',

@@ -1,15 +1,15 @@
 import dotenv from 'dotenv';
 
 dotenv.config();
-import { getIPAddress } from '../utils/utils.js';
+import { getIPAddress } from '@/utils/utils.js';
 // ==========================================================
-//                Current Enviroment
+//                Current Environment
 // ==========================================================
 
-const nodeEnv = process.env.NODE_ENV || 'local';
+const nodeEnv: string = process.env.NODE_ENV || 'local';
 
 // ==========================================================
-//                Check Enviroment Variables
+//                Check Environment Variables
 // ==========================================================
 
 if (!process.env.DATABASE_URL) throw new Error('Missing DATABASE_URL in environment env file');
@@ -24,15 +24,16 @@ if (!process.env.EMAIL) throw new Error('Missing EMAIL in environment env file.'
 if (!process.env.EMAIL_PASS) throw new Error('Missing EMAIL_PASS in environment env file.');
 
 // ==========================================================
-//                Configuration Variabels
+//                Configuration Variables
 // ==========================================================
 
-const port = process.env.PORT;
-const dbUrl = process.env.DATABASE_URL + process.env.DATABASE_NAME;
-const jwtSecret = process.env.JWT_SECRET_KEY;
-const domain = nodeEnv === 'local' ? `http://${getIPAddress()}:${port}` : process.env.DOMAIN;
+const port: string = process.env.PORT;
+const dbUrl: string = process.env.DATABASE_URL + process.env.DATABASE_NAME;
+const jwtSecret: string = process.env.JWT_SECRET_KEY;
+const domain: string =
+    nodeEnv === 'local' ? `http://${getIPAddress()}:${port}` : process.env.DOMAIN!;
 
 // for sending emails
-const serviceEmail = process.env.EMAIL;
-const serviceEmailPass = process.env.EMAIL_PASS;
+const serviceEmail: string = process.env.EMAIL;
+const serviceEmailPass: string = process.env.EMAIL_PASS;
 export { nodeEnv, port, dbUrl, jwtSecret, domain, serviceEmail, serviceEmailPass };

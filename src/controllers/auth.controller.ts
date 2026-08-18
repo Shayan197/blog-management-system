@@ -1,11 +1,13 @@
 import crypto from 'crypto';
 
-import sequelize from '../config/db.config.js';
-import User from '../models/auth/user.model.js';
-import { sentOTPEmail } from '../utils/email.util.js';
-import { generateAccessToken, generateRefreshToken } from '../utils/jwt.utils.js';
-import { hashPassword, comparePassword, validatePassword } from '../utils/password.util.js';
-import { bodyReqFields } from '../utils/requiredFields.util.js';
+import { Request, Response } from 'express';
+
+import sequelize from '@/config/db.config.js';
+import User from '@/models/auth/user.model.js';
+import { sentOTPEmail } from '@/utils/email.util.js';
+import { generateAccessToken, generateRefreshToken } from '@/utils/jwt.utils.js';
+import { hashPassword, comparePassword, validatePassword } from '@/utils/password.util.js';
+import { bodyReqFields } from '@/utils/requiredFields.util.js';
 import {
     catchWithSequelizeFrontError,
     catchWithSequelizeValidationError,
@@ -15,15 +17,15 @@ import {
     successOk,
     catchError,
     unauthorizedError,
-} from '../utils/response.util.js';
-import { convertToLowerCase, extractFieldsToUpdate, validateEmail } from '../utils/utils.js';
+} from '@/utils/response.util.js';
+import { convertToLowerCase, extractFieldsToUpdate, validateEmail } from '@/utils/utils.js';
 
 // ========================================
 //            CONTROLLERS
 // ========================================
 
 // =================================== registerUser ===================================
-export const registerUser = async (req, res) => {
+export const registerUser = async (req: Request, res: Response) => {
     try {
         const reqBodyFields = bodyReqFields(req, res, [
             'firstName',
@@ -36,7 +38,8 @@ export const registerUser = async (req, res) => {
         if (reqBodyFields.error) return reqBodyFields.response;
         const excludeFields = ['password', 'confirmPassword', 'email'];
         const requestData = convertToLowerCase(req.body, excludeFields);
-        const { firstName, lastName, gender, email, password, confirmPassword } = requestData;
+        const { firstName, lastName, gender, email, password, confirmPassword } =
+            requestData as Record<string, string>;
 
         // Check if a user with the given email already exists
         const userExist = await User.findOne({
@@ -62,7 +65,7 @@ export const registerUser = async (req, res) => {
             otp: crypto.randomInt(100000, 999999),
             password: await hashPassword(password),
         };
-        await User.create(userData);
+        await User.create(userData as unknown as Partial<User>);
         await sentOTPEmail(email, userData.otp);
         return created(res, 'user created successfully');
     } catch (error) {
@@ -71,11 +74,11 @@ export const registerUser = async (req, res) => {
 };
 
 // =================================== verifyOtp ===================================
-export const verifyOTP = async (req, res) => {
+export const verifyOTP = async (req: Request, res: Response) => {
     const reqBodyFields = bodyReqFields(req, res, ['otp', 'email']);
     if (reqBodyFields.error) return reqBodyFields.response;
 
-    const { otp, email } = req.body;
+    const { otp, email } = req.body as { otp: string; email: string };
     const invalidEmail = validateEmail(email);
     if (invalidEmail) return validationError(res, invalidEmail);
 
@@ -163,7 +166,7 @@ export const verifyOTP = async (req, res) => {
         // });
         return successOk(res, 'User verified successfully');
     } catch (error) {
-        if (!transaction.finished) {
+        if (!(transaction as unknown as { finished?: string }).finished) {
             await transaction.rollback();
         }
         return catchWithSequelizeFrontError(res, error);
@@ -171,12 +174,12 @@ export const verifyOTP = async (req, res) => {
 };
 
 // =================================== resendOtp ===================================
-export const resendOtp = async (req, res) => {
+export const resendOtp = async (req: Request, res: Response) => {
     try {
         const reqBodyFields = bodyReqFields(req, res, ['email']);
         if (reqBodyFields.error) return reqBodyFields.response;
 
-        const { email } = req.body;
+        const { email } = req.body as { email: string };
         const invalidEmail = validateEmail(email);
         if (invalidEmail) return validationError(res, invalidEmail);
 
@@ -203,12 +206,12 @@ export const resendOtp = async (req, res) => {
 };
 
 // =================================== loginUser ====================================
-export const loginUser = async (req, res) => {
+export const loginUser = async (req: Request, res: Response) => {
     try {
         const reqBodyFields = bodyReqFields(req, res, ['email', 'password']);
         if (reqBodyFields.error) return reqBodyFields.response;
 
-        const { email, password } = req.body;
+        const { email, password } = req.body as { email: string; password: string };
         const invalidEmail = validateEmail(email);
         if (invalidEmail) return validationError(res, invalidEmail);
 
@@ -228,11 +231,12 @@ export const loginUser = async (req, res) => {
             user.otpCount = 0;
             await user.save({ fields: ['otp', 'otpCount'] });
             const otpSent = await sentOTPEmail(email, user.otp);
-            if (!otpSent)
+            if (!otpSent) {
                 return validationError(
                     res,
                     'OTP service is down, and your account is not active yet. Please try in a while ',
                 );
+            }
             return validationError(
                 res,
                 'Account is not active, an OTP has been sent to your email address. Please verify your email address to login.',
@@ -274,18 +278,19 @@ export const loginUser = async (req, res) => {
 };
 
 // =================================== regenerateAccessToken ====================================
-export const regenerateAccessToken = async (req, res) => {
+export const regenerateAccessToken = async (req: Request, res: Response) => {
     try {
         const user = await User.findOne({
             where: { uuid: req.userUid },
             attributes: ['status', 'isActive', 'isVerified'],
         });
         if (!user) return unauthorizedError(res, 'Invalid token');
-        if (user.status !== 'active' || !user.isActive || !user.isVerified)
+        if (user.status !== 'active' || !user.isActive || !user.isVerified) {
             return unauthorizedError(res, 'Token is not valid. Please login again.');
+        }
 
-        const accessToken = generateAccessToken({ uuid: req.userUid });
-        const refreshToken = generateRefreshToken({ uuid: req.userUid });
+        const accessToken = generateAccessToken({ uuid: req.userUid! });
+        const refreshToken = generateRefreshToken({ uuid: req.userUid! });
 
         res.cookie('accessToken', accessToken, {
             httpOnly: true,
@@ -309,7 +314,7 @@ export const regenerateAccessToken = async (req, res) => {
 };
 
 // =================================== logoutUser ====================================
-export const logoutUser = async (req, res) => {
+export const logoutUser = async (req: Request, res: Response) => {
     try {
         const user = await User.findOne({ where: { uuid: req.userUid } });
         if (!user) return unauthorizedError(res, 'User not found');
@@ -336,7 +341,7 @@ export const logoutUser = async (req, res) => {
 };
 
 // =================================== getUser ====================================
-export const getUser = async (req, res) => {
+export const getUser = async (req: Request, res: Response) => {
     try {
         const user = await User.findOne({
             where: { uuid: req.userUid },
@@ -350,7 +355,7 @@ export const getUser = async (req, res) => {
 };
 
 // =================================== updateUser ====================================
-export const updateUser = async (req, res) => {
+export const updateUser = async (req: Request, res: Response) => {
     try {
         const fieldsToUpdate = extractFieldsToUpdate(req.body, [
             'firstName',
@@ -363,21 +368,25 @@ export const updateUser = async (req, res) => {
             'preferences',
             'avatar',
         ]);
-        if (Object.keys(fieldsToUpdate).length === 0)
+        if (Object.keys(fieldsToUpdate).length === 0) {
             return validationError(res, 'No fields to update.');
+        }
         if (fieldsToUpdate.email) {
-            const invalidEmail = validateEmail(fieldsToUpdate.email);
+            const invalidEmail = validateEmail(fieldsToUpdate.email as string);
             if (invalidEmail) return validationError(res, invalidEmail);
             // check if email already exists
             const existingUser = await User.findOne({
                 where: { email: fieldsToUpdate.email },
                 attributes: ['uuid'],
             });
-            if (existingUser && existingUser.uuid !== req.userUid)
+            if (existingUser && existingUser.uuid !== req.userUid) {
                 return validationError(res, 'Email already exists');
+            }
         }
 
-        const [updateRows] = await User.update(fieldsToUpdate, { where: { uuid: req.userUid } });
+        const [updateRows] = await User.update(fieldsToUpdate as unknown as Partial<User>, {
+            where: { uuid: req.userUid },
+        });
         if (!updateRows) return validationError(res, 'Unable to update user, try again later');
         return successOk(res, 'User updated successfully');
     } catch (error) {
@@ -386,7 +395,7 @@ export const updateUser = async (req, res) => {
 };
 
 // =================================== updatePassword ====================================
-export const updatePassword = async (req, res) => {
+export const updatePassword = async (req: Request, res: Response) => {
     try {
         const reqBodyFields = bodyReqFields(req, res, [
             'oldPassword',
@@ -395,11 +404,16 @@ export const updatePassword = async (req, res) => {
         ]);
         if (reqBodyFields.error) return reqBodyFields.response;
 
-        const { oldPassword, newPassword, confirmPassword } = req.body;
+        const { oldPassword, newPassword, confirmPassword } = req.body as {
+            oldPassword: string;
+            newPassword: string;
+            confirmPassword: string;
+        };
 
         //check if old password and new password are same
-        if (oldPassword === newPassword)
+        if (oldPassword === newPassword) {
             return validationError(res, 'New password must be different from old password');
+        }
         // validate new password
         const invalidPassword = validatePassword(newPassword, confirmPassword);
         if (invalidPassword) return validationError(res, invalidPassword);
@@ -424,11 +438,11 @@ export const updatePassword = async (req, res) => {
 };
 
 // ============================ forgotPassword ============================
-export const forgotPassword = async (req, res) => {
+export const forgotPassword = async (req: Request, res: Response) => {
     try {
         const reqBodyFields = bodyReqFields(req, res, ['email']);
         if (reqBodyFields.error) return reqBodyFields.response;
-        const { email } = req.body;
+        const { email } = req.body as { email: string };
         // validate email
         const invalidEmail = validateEmail(email);
         if (invalidEmail) return validationError(res, invalidEmail);
@@ -456,10 +470,10 @@ export const forgotPassword = async (req, res) => {
 
 // ============================ forgotPasswordOtpVerify =============================
 //Handels verify otp
-export const forgotPasswordOtpVerify = async (req, res) => {
+export const forgotPasswordOtpVerify = async (req: Request, res: Response) => {
     const reqBodyFields = bodyReqFields(req, res, ['email', 'otp']);
     if (reqBodyFields.error) return reqBodyFields.response;
-    const { email, otp } = req.body;
+    const { email, otp } = req.body as { email: string; otp: string };
     // validate email
     const invalidEmail = validateEmail(email);
     if (invalidEmail) return validationError(res, invalidEmail);
@@ -514,17 +528,22 @@ export const forgotPasswordOtpVerify = async (req, res) => {
         await transaction.commit();
         return successOk(res, 'OTP verified successfully');
     } catch (error) {
-        if (!transaction.finished) await transaction.rollback();
+        if (!(transaction as unknown as { finished?: string }).finished)
+            await transaction.rollback();
         return catchError(res, error);
     }
 };
 
 // ================================ forgotPasswordReset ================================
-export const forgotPasswordReset = async (req, res) => {
+export const forgotPasswordReset = async (req: Request, res: Response) => {
     try {
         const reqBodyFields = bodyReqFields(req, res, ['email', 'newPassword', 'confirmPassword']);
         if (reqBodyFields.error) return reqBodyFields.response;
-        const { email, newPassword, confirmPassword } = req.body;
+        const { email, newPassword, confirmPassword } = req.body as {
+            email: string;
+            newPassword: string;
+            confirmPassword: string;
+        };
         // validate email
         const invalidEmail = validateEmail(email);
         if (invalidEmail) return validationError(res, invalidEmail);
@@ -537,8 +556,9 @@ export const forgotPasswordReset = async (req, res) => {
             attributes: ['id', 'uuid', 'password', 'otp', 'otpCount', 'canChangePassword'],
         });
         if (!user) return validationError(res, 'User not found');
-        if (!user.canChangePassword)
+        if (!user.canChangePassword) {
             return validationError(res, 'You cannot change password, please contact admin');
+        }
         // hash new password
         const hashedPassword = await hashPassword(newPassword);
         // update password in the database

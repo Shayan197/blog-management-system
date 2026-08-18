@@ -1,6 +1,6 @@
-import User from '../../models/auth/user.model.js';
+import User from '@/models/auth/user.model.js';
 
-export const seedUsers = async () => {
+export const seedUsers = async (): Promise<void> => {
     const users = [
         {
             roleId: 1,
@@ -159,7 +159,7 @@ export const seedUsers = async () => {
             },
         },
     ];
-    await User.bulkCreate(users, {
+    await User.bulkCreate(users as unknown as Partial<User>[], {
         ignoreDuplicates: true,
     });
     console.log('User seeded successfully');

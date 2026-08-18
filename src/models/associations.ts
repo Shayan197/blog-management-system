@@ -1,5 +1,5 @@
-import Role from './auth/role.model.js';
-import User from './auth/user.model.js';
+import Role from '@/models/auth/role.model.js';
+import User from '@/models/auth/user.model.js';
 
 Role.hasMany(User, {
     foreignKey: 'roleId',
